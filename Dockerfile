@@ -1,34 +1,19 @@
-FROM clojure
+FROM theasp/clojurescript-nodejs:shadow-cljs
 
-
-ENV CLJ_USER=clj_user
-ENV CLJ_GROUP=clj_group
-ENV HOME_DIR=/home/clj_user
 ENV WORK_DIR=/usr/src/app
 
+RUN wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein && \
+    mv lein /usr/bin && chmod a+x /usr/bin/lein
 
-RUN mkdir -p ${WORK_DIR}
+USER node
 
-RUN mkdir ${HOME_DIR}
+RUN lein
 
+WORKDIR ${WORK_DIR}
 
-RUN groupadd -g 1000 ${CLJ_GROUP}
+COPY package.json yarn.lock shadow-cljs.edn project.clj ${WORK_DIR}/
 
-RUN useradd -u 1000 -g 1000 -d ${HOME_DIR} ${CLJ_USER}
+#RUN lein deps
 
-
-
-RUN chown -R ${CLJ_USER}:${CLJ_GROUP} ${HOME_DIR} ${WORK_DIR}
-
-
-USER ${CLJ_USER}
-
-RUN mkdir ${WORK_DIR}/ui
-
-WORKDIR ${WORK_DIR}/ui
-
-COPY ui/project.clj ${WORK_DIR}/ui/
-
-RUN lein deps
-
-# COPY . ${WORK_DIR}
+#COPY ./ ${WORK_DIR}
+#RUN shadow-cljs release client server

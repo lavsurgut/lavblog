@@ -8,6 +8,8 @@ services:
         volumes:
             - .:/usr/src/app
         ports:
-            - 3449:3449
-            - 7888:7888
-        command: ["/usr/src/app/ui/run.sh"]
+            - 8230:8230
+            - 8280:8280
+            - 8290:8290
+            - 9630:9630
+        command: "shadow-cljs watch app"
